@@ -1,0 +1,51 @@
+package com.example.hi.album;
+
+import java.io.File;
+import java.util.Date;
+// Class chứa thông tin một ảnh trong Project
+public class Hinh {
+
+    String duongdan;
+    String tenhinh;
+    Integer addDate;
+    boolean check;
+
+    public Hinh(String duongdan, String tenhinh, Integer adddDate) {
+        this.duongdan = duongdan;
+        this.tenhinh = tenhinh;
+        this.addDate = adddDate;
+        this.check = false;
+    }
+
+    public String getDuongdan() {
+        return duongdan;
+    }
+
+    public void setDuongdan(String duongdan) {
+        this.duongdan = duongdan;
+    }
+
+    public String getTenhinh() {
+        return tenhinh;
+    }
+
+    public void setTenhinh(String tenhinh) {
+        this.tenhinh = tenhinh;
+    }
+
+    public Integer getAddDate() {
+        return addDate;
+    }
+
+    public void setAddDate(Integer adddDate) {
+        this.addDate = adddDate;
+    }
+
+    public boolean isCheck() {
+        return check;
+    }
+
+    public void setCheck(boolean check) {
+        this.check = check;
+    }
+}
