@@ -17,6 +17,9 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 
 
 import java.io.File;
@@ -66,14 +69,19 @@ public class CustomRecyclerviewAdapter extends RecyclerView.Adapter<CustomRecycl
     @Override
     public void onBindViewHolder(final MyViewHolder myViewHolder, final int position) {
         long start = System.currentTimeMillis();
-        File file = new File(data.get(position).getDuongdan());
-        Glide.with(context).load(file)
+       //File file = new File(data.get(position).getDuongdan());
+
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .priority(Priority.HIGH);
+
+        Glide.with(context).load(data.get(position).getDuongdan()).apply(options).thumbnail(0.6f)
                 .into(myViewHolder.imageView);
         myViewHolder.checkBox.setChecked(data.get(position).check);
-//        previousPosition = position;
-//        final int currentPosition = position;
-//        final Hinh infoData = data.get(position);
-        if (MainActivity.status == true) {
+
+        if (MainActivity.status) {
             myViewHolder.linearLayout.setVisibility(View.VISIBLE);
         } else {
             myViewHolder.linearLayout.setVisibility(View.INVISIBLE);
@@ -93,7 +101,7 @@ public class CustomRecyclerviewAdapter extends RecyclerView.Adapter<CustomRecycl
         myViewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (myViewHolder.checkBox.isChecked() == true) {
+                if (myViewHolder.checkBox.isChecked()) {
                     MainActivity.collectedimgs.add(new Hinh(data.get(position).getDuongdan()
                             , data.get(position).getTenhinh()
                             , data.get(position).getAddDate()));

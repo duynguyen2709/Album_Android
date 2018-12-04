@@ -19,6 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -76,8 +79,16 @@ public class CustomListviewAdapter extends ArrayAdapter<ThongtinAlbum> {
         viewHolder.checkBox.setChecked(false);
         viewHolder.ten.setText(mang.get(position).getTen());
         viewHolder.soluong.setText(mang.get(position).getSoluong()+"");
-        File file=new File(mang.get(position).getDuongdan());
-        Glide.with(context).load(file).into(viewHolder.imageView);
+        //File file=new File(mang.get(position).getDuongdan());
+
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .priority(Priority.HIGH);
+
+        Glide.with(context).load(mang.get(position).getDuongdan())
+                .apply(options).thumbnail(0.6f).into(viewHolder.imageView);
 
         if(MainActivity.statusalbum==true)
         {

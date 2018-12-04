@@ -13,6 +13,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -51,7 +54,13 @@ public class ImagePagerAdapter extends PagerAdapter {
         PhotoView img;
         img=(PhotoView) view.findViewById(R.id.imgofimgactivity);
         File file=new File(mang.get(position).getDuongdan());
-        Glide.with(context).load(file)
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .priority(Priority.HIGH);
+
+        Glide.with(context).load(file).apply(options).thumbnail(0.6f)
                 .into(img);
         container.addView(view);
         return view;
