@@ -384,16 +384,15 @@ public class ImageActivity extends AppCompatActivity {
         btnOK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int width = Integer.parseInt(Width.getText().toString());
-                int height = Integer.parseInt(Height.getText().toString());
+                try {
+                    int width = Integer.parseInt(Width.getText().toString());
+                    int height = Integer.parseInt(Height.getText().toString());
+
                 File imgFile = new File(choosenImage.duongdan);
-                        /*ImageView temp = null;
-                        Bitmap bitmap=null;
-                        Glide.with(getBaseContext()).load(imgFile).override(width,height).into(temp);*/
                 Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                 Bitmap resBitmap = Bitmap.createScaledBitmap(myBitmap, width, height, false);
                 File f = new File(Environment.getExternalStorageDirectory() + File.separator + "resize_" + UUID.randomUUID().toString() + ".jpeg");
-                try {
+
                     f.createNewFile();
                     FileOutputStream out = new FileOutputStream(f);
                     f.setReadable(true, false);
@@ -417,7 +416,8 @@ public class ImageActivity extends AppCompatActivity {
                                 Uri.parse("file://"
                                         + Environment.getExternalStorageDirectory())));
                     }
-                } catch (IOException e) {
+                }
+                catch (NumberFormatException|IOException e){
                     e.printStackTrace();
                 }
                 dialog1.dismiss();

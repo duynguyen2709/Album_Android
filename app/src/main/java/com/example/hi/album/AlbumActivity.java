@@ -45,7 +45,7 @@ public class AlbumActivity extends AppCompatActivity {
         //*****************************************************************************************************//
 
         if(ImageActivity.co==false) {
-            StaggeredGridLayoutManager mStaggeredVerticalLayoutManager = new StaggeredGridLayoutManager(7, StaggeredGridLayoutManager.VERTICAL);
+            StaggeredGridLayoutManager mStaggeredVerticalLayoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
             customRecyclerviewAdapter = new CustomRecyclerviewAdapter(AlbumActivity.this, MainActivity.mang.get(pos), true,pos);
             recyclerView.setAdapter(customRecyclerviewAdapter);
             recyclerView.setLayoutManager(mStaggeredVerticalLayoutManager);
@@ -64,7 +64,7 @@ public class AlbumActivity extends AppCompatActivity {
             MainActivity.collectedimgs.clear();
             MainActivity.status=false;
             //***Show ảnh không checkbox***//
-            StaggeredGridLayoutManager mStaggeredVerticalLayoutManager = new StaggeredGridLayoutManager(7, StaggeredGridLayoutManager.VERTICAL);
+            StaggeredGridLayoutManager mStaggeredVerticalLayoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
             for(int i=0;i<MainActivity.mang.get(pos).size();i++)
             {
                 MainActivity.mang.get(pos).get(i).setCheck(false);
@@ -126,7 +126,7 @@ public class AlbumActivity extends AppCompatActivity {
 
 
         //***Cài đặt RecyclerView***//
-        StaggeredGridLayoutManager mStaggeredVerticalLayoutManager = new StaggeredGridLayoutManager(7, StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager mStaggeredVerticalLayoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
         if(MainActivity.mang.get(pos)!=null) {
             customRecyclerviewAdapter = new CustomRecyclerviewAdapter(AlbumActivity.this, MainActivity.mang.get(pos), true,pos);
             recyclerView.setAdapter(customRecyclerviewAdapter);
@@ -152,7 +152,7 @@ public class AlbumActivity extends AppCompatActivity {
                     MainActivity.collectedimgs.clear();
 
                     //***Show lại ảnh của album, lúc này sẽ xuất hiện check box
-                    StaggeredGridLayoutManager mStaggeredVerticalLayoutManager = new StaggeredGridLayoutManager(7, StaggeredGridLayoutManager.VERTICAL);
+                    StaggeredGridLayoutManager mStaggeredVerticalLayoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
                     customRecyclerviewAdapter = new CustomRecyclerviewAdapter(AlbumActivity.this, MainActivity.mang.get(pos), true,pos);
                     recyclerView.setAdapter(customRecyclerviewAdapter);
                     recyclerView.setLayoutManager(mStaggeredVerticalLayoutManager);
@@ -208,7 +208,7 @@ public class AlbumActivity extends AppCompatActivity {
                             //***Album còn tồn tại => show lại ảnh còn lại sau khi xóa***//
                             else {
                                 //***Show ảnh không checkbox***//
-                                StaggeredGridLayoutManager mStaggeredVerticalLayoutManager = new StaggeredGridLayoutManager(7, StaggeredGridLayoutManager.VERTICAL);
+                                StaggeredGridLayoutManager mStaggeredVerticalLayoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
                                 customRecyclerviewAdapter = new CustomRecyclerviewAdapter(AlbumActivity.this, MainActivity.mang.get(pos), true,pos);
                                 recyclerView.setAdapter(customRecyclerviewAdapter);
                                 recyclerView.setLayoutManager(mStaggeredVerticalLayoutManager);
@@ -232,7 +232,7 @@ public class AlbumActivity extends AppCompatActivity {
                     MainActivity.collectedimgs.clear();
                     MainActivity.status=false;
                     //***Show ảnh không checkbox***//
-                    StaggeredGridLayoutManager mStaggeredVerticalLayoutManager = new StaggeredGridLayoutManager(7, StaggeredGridLayoutManager.VERTICAL);
+                    StaggeredGridLayoutManager mStaggeredVerticalLayoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
                     for(int i1=0;i1<MainActivity.mang.get(pos).size();i1++)
                     {
                         MainActivity.mang.get(pos).get(i1).setCheck(false);
@@ -271,7 +271,7 @@ public class AlbumActivity extends AppCompatActivity {
                     MainActivity.status = false;
                     //MainActivity.collectedimgs.clear();
                     //***Show ảnh không checkbox***//
-                    StaggeredGridLayoutManager mStaggeredVerticalLayoutManager = new StaggeredGridLayoutManager(7, StaggeredGridLayoutManager.VERTICAL);
+                    StaggeredGridLayoutManager mStaggeredVerticalLayoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
                     customRecyclerviewAdapter = new CustomRecyclerviewAdapter(AlbumActivity.this, MainActivity.mang.get(pos), true,pos);
                     recyclerView.setAdapter(customRecyclerviewAdapter);
                     recyclerView.setLayoutManager(mStaggeredVerticalLayoutManager);
