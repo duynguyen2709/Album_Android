@@ -119,6 +119,7 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
         customListviewImageAdapter = new CustomListviewImageAdapter(context, mangHinhDate, R.layout.custom_item_listview_img);
         listView.setAdapter(customListviewImageAdapter);
         listView.setDivider(null);
+        listView.setFastScrollEnabled(true);
         MainActivity.funcExecuteTime.put("onResume AnhFragment", System.currentTimeMillis() - start);
 
         //
