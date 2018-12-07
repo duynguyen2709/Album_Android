@@ -45,7 +45,7 @@ import id.zelory.compressor.Compressor;
 public class ImageActivity extends AppCompatActivity {
     Toolbar toolbar;
     ViewPagerFixer viewPager;
-    Button btn;
+    Button btn_Delete;
     Button btn_Share;
     Button btn_Crop;
     Button btn_Resize;
@@ -244,23 +244,7 @@ public class ImageActivity extends AppCompatActivity {
         btn_Crop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (loai == false) {
-                    int tmp = viewPager.getCurrentItem();
-                    Log.d("tmp", tmp + "");
-                    Log.d("tmp", AnhFragment.mangHinh.get(tmp).tenhinh + "");
-                    Hinh choosenImage = AnhFragment.mangHinh.get(tmp);
-                    File imgFile = new File(choosenImage.duongdan);
-                    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                    editBitmap(myBitmap, choosenImage.duongdan);
-                } else {
-                    int tmp = viewPager.getCurrentItem();
-                    Log.d("tmp", tmp + "");
-                    Log.d("tmp", AnhFragment.mangHinh.get(tmp).tenhinh + "");
-                    Hinh choosenImage = MainActivity.mang.get(AlbumFragment.postionofFocusingAlbum).get(tmp);
-                    File imgFile = new File(choosenImage.duongdan);
-                    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                    editBitmap(myBitmap, choosenImage.duongdan);
-                }
+                cropImage();
             }
         });
         //Xử lý sự kiện Share ảnh
@@ -286,69 +270,7 @@ public class ImageActivity extends AppCompatActivity {
         btn_Resize.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int tmp = viewPager.getCurrentItem();
-                final Hinh choosenImage = AnhFragment.mangHinh.get(tmp);
-                final Dialog dialog1;
-                dialog1 = new Dialog(ImageActivity.this);
-                dialog1.setTitle("Nhập kích thước: ");
-                dialog1.setContentView(R.layout.resize_dialog);
-                dialog1.show();
-                final EditText Width, Height;
-                Button btnOK, btnCancel;
-                Width = dialog1.findViewById(R.id.editText_Width);
-                Height = dialog1.findViewById(R.id.editText_Height);
-                btnOK = dialog1.findViewById(R.id.btnOk);
-                btnCancel = dialog1.findViewById(R.id.btnCancel);
-                btnOK.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int width = Integer.parseInt(Width.getText().toString());
-                        int height = Integer.parseInt(Height.getText().toString());
-                        File imgFile = new File(choosenImage.duongdan);
-                        /*ImageView temp = null;
-                        Bitmap bitmap=null;
-                        Glide.with(getBaseContext()).load(imgFile).override(width,height).into(temp);*/
-                        Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                        Bitmap resBitmap = Bitmap.createScaledBitmap(myBitmap, width, height, false);
-                        File f = new File(Environment.getExternalStorageDirectory() + File.separator + "resize_" + UUID.randomUUID().toString() + ".jpeg");
-                        try {
-                            f.createNewFile();
-                            FileOutputStream out = new FileOutputStream(f);
-                            f.setReadable(true, false);
-                            f.setWritable(true, false);
-                            /*Matrix matrix = new Matrix();
-
-                            matrix.postRotate(270);
-                            Bitmap rotatedBitmap = Bitmap.createBitmap(resBitmap, 0, 0, resBitmap.getWidth(), resBitmap.getHeight(), matrix, true);*/
-                            resBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                            out.flush();
-                            out.close();
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                Intent mediaScanIntent = new Intent(
-                                        Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                                Uri contentUri = Uri.fromFile(f);
-                                mediaScanIntent.setData(contentUri);
-                                getBaseContext().sendBroadcast(mediaScanIntent);
-                            } else {
-                                sendBroadcast(new Intent(
-                                        Intent.ACTION_MEDIA_MOUNTED,
-                                        Uri.parse("file://"
-                                                + Environment.getExternalStorageDirectory())));
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        dialog1.dismiss();
-
-
-                    }
-                });
-                btnCancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog1.dismiss();
-                    }
-                });
+                resizeImage();
             }
         });
 
@@ -357,7 +279,7 @@ public class ImageActivity extends AppCompatActivity {
         //*     I:  ảnh của Anhfragment                   *
         //*     II: ảnh của Album                         *
         //*************************************************
-        btn.setOnClickListener(new View.OnClickListener() {
+        btn_Delete.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -388,7 +310,283 @@ public class ImageActivity extends AppCompatActivity {
 
     }
 
-    private void deleteImage(){
+    private void editBitmap(Bitmap bitmap, String filePath) {
+        try {
+            File file = new File(filePath);
+            file.setReadable(true, false);
+            file.setWritable(true, false);
+            /*FileOutputStream fOut = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+            fOut.flush();
+            fOut.close();*/
+            CropImage.activity(Uri.fromFile(file))
+                    .start(this);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                Bitmap bm = null;
+                InputStream is = null;
+                String url = resultUri.toString();
+                BufferedInputStream bis = null;
+                try {
+                    URLConnection conn = new URL(url).openConnection();
+                    conn.connect();
+                    is = conn.getInputStream();
+                    bis = new BufferedInputStream(is, 8192);
+                    bm = BitmapFactory.decodeStream(bis);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                File file = new File(resultUri.getPath());
+
+
+                try {
+                    FileOutputStream out = new FileOutputStream(file);
+                    file.setReadable(true, false);
+                    file.setWritable(true, false);
+                    bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                    out.flush();
+                    out.close();
+                    MediaStore.Images.Media.insertImage(getContentResolver(), file.getAbsolutePath(), file.getName(), file.getName());
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+        }
+    }
+
+    private void Anhxa() {
+
+        toolbar = findViewById(R.id.toolbarofimgactivity);
+
+        btn_Delete = findViewById(R.id.delete_btn);
+        btn_Share = (Button) findViewById(R.id.share_btn);
+        btn_Crop = (Button) findViewById(R.id.crop_btn);
+        btn_Resize = (Button) findViewById(R.id.Resize_btn);
+        btn_Edit = (Button) findViewById(R.id.edit_btn);
+//        //Tạo nút back trên toolbar
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.inflateMenu(R.menu.menu_image);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+
+        viewPager = (ViewPagerFixer) findViewById(R.id.viewpagerofimgactivity);
+
+        if (loai == false) {
+            //********************************************
+            //*Xử lí trường hợp: Xuất ảnh của Anhfragment*
+            //********************************************
+            for (int i = 0; i < AnhFragment.mangHinh.size(); i++) {
+                if (diachi.equals(AnhFragment.mangHinh.get(i).getDuongdan())) {
+                    position = i;
+                    break;
+                }
+            }
+            ImagePagerAdapter imagePagerAdapter = new ImagePagerAdapter(AnhFragment.mangHinh, this);
+            viewPager.setAdapter(imagePagerAdapter);
+        } else {
+            //****************************************
+            //*Xử lí trường hợp: Xuất ảnh của 1 album*
+            //****************************************
+            for (int i = 0; i < MainActivity.mang.get(AlbumFragment.postionofFocusingAlbum).size(); i++) {
+                if (diachi.equals(MainActivity.mang.get(AlbumFragment.postionofFocusingAlbum).get(i).getDuongdan())) {
+                    position = i;
+                    break;
+                }
+            }
+            ImagePagerAdapter imagePagerAdapter = new ImagePagerAdapter(MainActivity.mang.get(AlbumFragment.postionofFocusingAlbum), this);
+            viewPager.setAdapter(imagePagerAdapter);
+
+        }
+
+
+    }
+
+    //*** Hàm dùng để cập nhật mảng chứa các album sau khi xóa và ghi lại vào bộ nhớ***//
+    public void refreshfAlbum(ArrayList<Hinh> collectedimgs) {
+
+
+        //***Các ảnh cần xóa nằm trong collectedimgs***//                                         *
+
+
+        for (int i = 0; i < collectedimgs.size(); i++) {
+            for (int j = 0; j < MainActivity.mang.size(); j++)
+                for (int j1 = 0; j1 < MainActivity.mang.get(j).size(); j1++) {
+                    if (MainActivity.mang.get(j).get(j1).getDuongdan().equals(collectedimgs.get(i).getDuongdan())) {
+                        MainActivity.mang.get(j).remove(j1);
+                    }
+                }
+        }
+
+
+    }
+
+    //*** Hàm dùng để ghi lại danh sách album vào bộ nhớ***//
+    public void ghivaobonhotrong() {
+
+        try {
+            //***Lấy đường dẫn bộ nhớ Cache***//
+            File duongdan = getCacheDir();
+            //***Đặt tên file chứa thông tin album***//
+            File taptin = new File(duongdan, "imgofalbum.txt");
+            //***Tạo luồng ghi***//
+            FileOutputStream out = new FileOutputStream(taptin);
+            //*** Tạo buffer để chứa dự liệu cần ghi vào File "imgofalbum.txt" ***//
+            String buffer = new String();
+            //*** Tiến hành ghi dữ liệu vào buffer***//
+
+            //**********************************************************************************************************************
+            //* Một album được ghi dưới dạng:                                                                                      *
+            //*                                                                                                                    *
+            //* "duongdan[1]"#"tenhinh[1]"#"date[1]"#"duongdan[2]"#"tenhinh[2]"#"date[2]"#"duongdan[3]"#"tenhinh[4]"#"date[3]"...% *
+            //*                                                                                                                    *
+            //* Kết thúc 1 album là dấu (  %  )                                                                                    *
+            //**********************************************************************************************************************
+            for (int i = 0; i < MainActivity.mang.size(); i++) {
+                for (int j = 0; j < MainActivity.mang.get(i).size(); j++) {
+                    if (j == MainActivity.mang.get(i).size() - 1) {
+                        //Trường hợp ảnh cuối cùng của Album
+                        //Không có dấu (  #  ) ở cuối
+                        buffer = buffer + MainActivity.mang.get(i).get(j).getDuongdan().toString()
+                                + "#"
+                                + MainActivity.mang.get(i).get(j).getTenhinh().toString()
+                                + "#"
+                                + MainActivity.mang.get(i).get(j).getAddDate().toString()
+                        ;
+                    } else {
+                        //Trường hợp bình thường
+                        //Có dấu (  #  ) ở cuối
+                        buffer = buffer + MainActivity.mang.get(i).get(j).getDuongdan().toString()
+                                + "#"
+                                + MainActivity.mang.get(i).get(j).getTenhinh().toString()
+                                + "#"
+                                + MainActivity.mang.get(i).get(j).getAddDate().toString()
+                                + "#";
+                    }
+
+                }
+                buffer += "%";
+            }
+            //*** ghi vào bộ nhớ ***//
+            out.write(buffer.getBytes());
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void ghivaobonhotrongtenalbum() {
+        File duongdan = getCacheDir();
+        File file = new File(duongdan, "nameofalbum.txt");
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            String buffer = new String();
+            for (int i = 0; i < MainActivity.MangTen.size(); i++) {
+                if (i != MainActivity.MangTen.size() - 1)
+                    buffer += MainActivity.MangTen.get(i) + "#";
+                else
+                    buffer += MainActivity.MangTen.get(MainActivity.MangTen.size() - 1);
+            }
+
+            fileOutputStream.write(buffer.getBytes());
+            fileOutputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private void resizeImage() {
+        int tmp = viewPager.getCurrentItem();
+        final Hinh choosenImage = AnhFragment.mangHinh.get(tmp);
+        final Dialog dialog1;
+        dialog1 = new Dialog(ImageActivity.this);
+        dialog1.setTitle("Nhập kích thước: ");
+        dialog1.setContentView(R.layout.resize_dialog);
+        dialog1.show();
+        final EditText Width, Height;
+        Button btnOK, btnCancel;
+        Width = dialog1.findViewById(R.id.editText_Width);
+        Height = dialog1.findViewById(R.id.editText_Height);
+        btnOK = dialog1.findViewById(R.id.btnOk);
+        btnCancel = dialog1.findViewById(R.id.btnCancel);
+        btnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int width = Integer.parseInt(Width.getText().toString());
+                int height = Integer.parseInt(Height.getText().toString());
+                File imgFile = new File(choosenImage.duongdan);
+                        /*ImageView temp = null;
+                        Bitmap bitmap=null;
+                        Glide.with(getBaseContext()).load(imgFile).override(width,height).into(temp);*/
+                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                Bitmap resBitmap = Bitmap.createScaledBitmap(myBitmap, width, height, false);
+                File f = new File(Environment.getExternalStorageDirectory() + File.separator + "resize_" + UUID.randomUUID().toString() + ".jpeg");
+                try {
+                    f.createNewFile();
+                    FileOutputStream out = new FileOutputStream(f);
+                    f.setReadable(true, false);
+                    f.setWritable(true, false);
+                            /*Matrix matrix = new Matrix();
+
+                            matrix.postRotate(270);
+                            Bitmap rotatedBitmap = Bitmap.createBitmap(resBitmap, 0, 0, resBitmap.getWidth(), resBitmap.getHeight(), matrix, true);*/
+                    resBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                    out.flush();
+                    out.close();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        Intent mediaScanIntent = new Intent(
+                                Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                        Uri contentUri = Uri.fromFile(f);
+                        mediaScanIntent.setData(contentUri);
+                        getBaseContext().sendBroadcast(mediaScanIntent);
+                    } else {
+                        sendBroadcast(new Intent(
+                                Intent.ACTION_MEDIA_MOUNTED,
+                                Uri.parse("file://"
+                                        + Environment.getExternalStorageDirectory())));
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                dialog1.dismiss();
+
+
+            }
+        });
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog1.dismiss();
+            }
+        });
+    }
+
+    private void deleteImage() {
         // luu lai vi tri cua hinh
         int tmp = viewPager.getCurrentItem();
         //Toast.makeText(ImageActivity.this, ""+viewPager.getCurrentItem(), //Toast.LENGTH_SHORT).show();
@@ -494,216 +692,13 @@ public class ImageActivity extends AppCompatActivity {
         }
 
     }
-    private void editBitmap(Bitmap bitmap, String filePath) {
-        try {
-            File file = new File(filePath);
-            file.setReadable(true, false);
-            file.setWritable(true, false);
-            /*FileOutputStream fOut = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
-            fOut.flush();
-            fOut.close();*/
-            CropImage.activity(Uri.fromFile(file))
-                    .start(this);
 
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == RESULT_OK) {
-                Uri resultUri = result.getUri();
-                Bitmap bm = null;
-                InputStream is = null;
-                String url = resultUri.toString();
-                BufferedInputStream bis = null;
-                try {
-                    URLConnection conn = new URL(url).openConnection();
-                    conn.connect();
-                    is = conn.getInputStream();
-                    bis = new BufferedInputStream(is, 8192);
-                    bm = BitmapFactory.decodeStream(bis);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                File file = new File(resultUri.getPath());
-
-
-                try {
-                    FileOutputStream out = new FileOutputStream(file);
-                    file.setReadable(true, false);
-                    file.setWritable(true, false);
-                    bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                    out.flush();
-                    out.close();
-                    MediaStore.Images.Media.insertImage(getContentResolver(), file.getAbsolutePath(), file.getName(), file.getName());
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Exception error = result.getError();
-            }
-        }
-    }
-
-    private void Anhxa() {
-
-        toolbar = findViewById(R.id.toolbarofimgactivity);
-
-        btn = findViewById(R.id.delete_btn);
-        btn_Share = (Button) findViewById(R.id.share_btn);
-        btn_Crop = (Button) findViewById(R.id.crop_btn);
-        btn_Resize = (Button) findViewById(R.id.Resize_btn);
-        btn_Edit = (Button) findViewById(R.id.edit_btn);
-//        //Tạo nút back trên toolbar
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        toolbar.inflateMenu(R.menu.menu_image);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
-
-        viewPager = (ViewPagerFixer) findViewById(R.id.viewpagerofimgactivity);
-
-
-        if (loai == false) {
-            //********************************************
-            //*Xử lí trường hợp: Xuất ảnh của Anhfragment*
-            //********************************************
-            for (int i = 0; i < AnhFragment.mangHinh.size(); i++) {
-                if (diachi.equals(AnhFragment.mangHinh.get(i).getDuongdan())) {
-                    position = i;
-                    break;
-                }
-            }
-            ImagePagerAdapter imagePagerAdapter = new ImagePagerAdapter(AnhFragment.mangHinh, this);
-            viewPager.setAdapter(imagePagerAdapter);
-        } else {
-            //****************************************
-            //*Xử lí trường hợp: Xuất ảnh của 1 album*
-            //****************************************
-            for (int i = 0; i < MainActivity.mang.get(AlbumFragment.postionofFocusingAlbum).size(); i++) {
-                if (diachi.equals(MainActivity.mang.get(AlbumFragment.postionofFocusingAlbum).get(i).getDuongdan())) {
-                    position = i;
-                    break;
-                }
-            }
-            ImagePagerAdapter imagePagerAdapter = new ImagePagerAdapter(MainActivity.mang.get(AlbumFragment.postionofFocusingAlbum), this);
-            viewPager.setAdapter(imagePagerAdapter);
-            Log.d("123456", "" + AlbumFragment.postionofFocusingAlbum);
-
-        }
-
-
-    }
-
-    //*** Hàm dùng để cập nhật mảng chứa các album sau khi xóa và ghi lại vào bộ nhớ***//
-    public void refreshfAlbum(ArrayList<Hinh> collectedimgs) {
-
-
-        //***Các ảnh cần xóa nằm trong collectedimgs***//                                         *
-
-
-        for (int i = 0; i < collectedimgs.size(); i++) {
-            for (int j = 0; j < MainActivity.mang.size(); j++)
-                for (int j1 = 0; j1 < MainActivity.mang.get(j).size(); j1++) {
-                    if (MainActivity.mang.get(j).get(j1).getDuongdan().equals(collectedimgs.get(i).getDuongdan())) {
-                        MainActivity.mang.get(j).remove(j1);
-                    }
-                }
-        }
-
-
-    }
-
-    //*** Hàm dùng để ghi lại danh sách album vào bộ nhớ***//
-    public void ghivaobonhotrong() {
-
-        try {
-            //***Lấy đường dẫn bộ nhớ Cache***//
-            File duongdan = getCacheDir();
-            //***Đặt tên file chứa thông tin album***//
-            File taptin = new File(duongdan, "imgofalbum.txt");
-            //***Tạo luồng ghi***//
-            FileOutputStream out = new FileOutputStream(taptin);
-            //*** Tạo buffer để chứa dự liệu cần ghi vào File "imgofalbum.txt" ***//
-            String buffer = new String();
-            //*** Tiến hành ghi dữ liệu vào buffer***//
-
-            //**********************************************************************************************************************
-            //* Một album được ghi dưới dạng:                                                                                      *
-            //*                                                                                                                    *
-            //* "duongdan[1]"#"tenhinh[1]"#"date[1]"#"duongdan[2]"#"tenhinh[2]"#"date[2]"#"duongdan[3]"#"tenhinh[4]"#"date[3]"...% *
-            //*                                                                                                                    *
-            //* Kết thúc 1 album là dấu (  %  )                                                                                    *
-            //**********************************************************************************************************************
-            for (int i = 0; i < MainActivity.mang.size(); i++) {
-                for (int j = 0; j < MainActivity.mang.get(i).size(); j++) {
-                    if (j == MainActivity.mang.get(i).size() - 1) {
-                        //Trường hợp ảnh cuối cùng của Album
-                        //Không có dấu (  #  ) ở cuối
-                        buffer = buffer + MainActivity.mang.get(i).get(j).getDuongdan().toString()
-                                + "#"
-                                + MainActivity.mang.get(i).get(j).getTenhinh().toString()
-                                + "#"
-                                + MainActivity.mang.get(i).get(j).getAddDate().toString()
-                        ;
-                    } else {
-                        //Trường hợp bình thường
-                        //Có dấu (  #  ) ở cuối
-                        buffer = buffer + MainActivity.mang.get(i).get(j).getDuongdan().toString()
-                                + "#"
-                                + MainActivity.mang.get(i).get(j).getTenhinh().toString()
-                                + "#"
-                                + MainActivity.mang.get(i).get(j).getAddDate().toString()
-                                + "#";
-                    }
-
-                }
-                buffer += "%";
-            }
-            //*** ghi vào bộ nhớ ***//
-            out.write(buffer.getBytes());
-            out.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
-    public void ghivaobonhotrongtenalbum() {
-        File duongdan = getCacheDir();
-        File file = new File(duongdan, "nameofalbum.txt");
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            String buffer = new String();
-            for (int i = 0; i < MainActivity.MangTen.size(); i++) {
-                if (i != MainActivity.MangTen.size() - 1)
-                    buffer += MainActivity.MangTen.get(i) + "#";
-                else
-                    buffer += MainActivity.MangTen.get(MainActivity.MangTen.size() - 1);
-            }
-
-            fileOutputStream.write(buffer.getBytes());
-            fileOutputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
+    private void cropImage() {
+        int tmp = viewPager.getCurrentItem();
+        Hinh choosenImage = (loai) ? MainActivity.mang.get(AlbumFragment.postionofFocusingAlbum).get(tmp) : AnhFragment.mangHinh.get(tmp);
+        File imgFile = new File(choosenImage.duongdan);
+        Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+        editBitmap(myBitmap, choosenImage.duongdan);
     }
 }
 
