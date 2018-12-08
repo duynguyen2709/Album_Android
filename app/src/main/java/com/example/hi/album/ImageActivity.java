@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -56,6 +57,8 @@ public class ImageActivity extends AppCompatActivity {
     boolean loai;
     static public boolean co = false;
 
+    public static Hinh currentImage = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,14 +105,18 @@ public class ImageActivity extends AppCompatActivity {
                 int tmp = viewPager.getCurrentItem();
                 Hinh choosenImage = AnhFragment.mangHinh.get(tmp);
                 try {
-                    final File photoFile = new File(choosenImage.duongdan);
+                    File photoFile = new File(choosenImage.duongdan);
+                    Uri imageUri = FileProvider.getUriForFile(ImageActivity.this,
+                            BuildConfig.APPLICATION_ID + ".provider",
+                            photoFile);
                     final Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                     intent.setType("image/*");
-                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(photoFile));
+                    intent.putExtra(Intent.EXTRA_STREAM, imageUri);
                     startActivity(Intent.createChooser(intent, "Share via"));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
             }
         });
 
@@ -152,6 +159,14 @@ public class ImageActivity extends AppCompatActivity {
                         confirmDialog.dismiss();
                     }
                 });
+            }
+        });
+
+        btn_Edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentImage = AnhFragment.mangHinh.get(viewPager.getCurrentItem());
+
             }
         });
 
@@ -388,10 +403,10 @@ public class ImageActivity extends AppCompatActivity {
                     int width = Integer.parseInt(Width.getText().toString());
                     int height = Integer.parseInt(Height.getText().toString());
 
-                File imgFile = new File(choosenImage.duongdan);
-                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                Bitmap resBitmap = Bitmap.createScaledBitmap(myBitmap, width, height, false);
-                File f = new File(Environment.getExternalStorageDirectory() + File.separator + "resize_" + UUID.randomUUID().toString() + ".jpeg");
+                    File imgFile = new File(choosenImage.duongdan);
+                    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                    Bitmap resBitmap = Bitmap.createScaledBitmap(myBitmap, width, height, false);
+                    File f = new File(Environment.getExternalStorageDirectory() + File.separator + "resize_" + UUID.randomUUID().toString() + ".jpeg");
 
                     f.createNewFile();
                     FileOutputStream out = new FileOutputStream(f);
@@ -416,8 +431,7 @@ public class ImageActivity extends AppCompatActivity {
                                 Uri.parse("file://"
                                         + Environment.getExternalStorageDirectory())));
                     }
-                }
-                catch (NumberFormatException|IOException e){
+                } catch (NumberFormatException | IOException e) {
                     e.printStackTrace();
                 }
                 dialog1.dismiss();

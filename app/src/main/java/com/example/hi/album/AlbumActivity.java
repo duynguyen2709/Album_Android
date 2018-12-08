@@ -317,6 +317,7 @@ public class AlbumActivity extends AppCompatActivity {
         ghivaobonhotrong();
         return flag;
     }
+
     public void ghivaobonhotrong()
     {
 
