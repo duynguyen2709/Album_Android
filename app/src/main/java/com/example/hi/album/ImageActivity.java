@@ -27,6 +27,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.hi.album.imageeditor.EditImageActivity;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.io.BufferedInputStream;
@@ -51,6 +52,7 @@ public class ImageActivity extends AppCompatActivity {
     Button btn_Crop;
     Button btn_Resize;
     Button btn_Edit;
+
 
     int position = 9;
     String diachi;
@@ -162,11 +164,13 @@ public class ImageActivity extends AppCompatActivity {
             }
         });
 
+        final Intent editIntent = new Intent(getApplicationContext(),EditImageActivity.class);
+
         btn_Edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 currentImage = AnhFragment.mangHinh.get(viewPager.getCurrentItem());
-
+                startActivity(editIntent);
             }
         });
 
