@@ -7,19 +7,19 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+import android.support.media.ExifInterface;
 import android.support.transition.ChangeBounds;
 import android.support.transition.TransitionManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.ImageView;
@@ -38,14 +38,16 @@ import ja.burhanrashid52.photoeditor.PhotoFilter;
 import ja.burhanrashid52.photoeditor.SaveSettings;
 import ja.burhanrashid52.photoeditor.ViewType;
 
+import static android.support.media.ExifInterface.ORIENTATION_ROTATE_180;
+import static android.support.media.ExifInterface.ORIENTATION_ROTATE_270;
+import static android.support.media.ExifInterface.ORIENTATION_ROTATE_90;
+
 public class EditImageActivity extends BaseActivity implements OnPhotoEditorListener,
         View.OnClickListener,
         PropertiesBSFragment.Properties,
         EmojiBSFragment.EmojiListener,
         StickerBSFragment.StickerListener, EditingToolsAdapter.OnItemSelected, FilterListener {
 
-    private static final int CAMERA_REQUEST = 52;
-    private static final int PICK_REQUEST = 53;
     private PhotoEditor mPhotoEditor;
     private PhotoEditorView mPhotoEditorView;
     private PropertiesBSFragment mPropertiesBSFragment;
@@ -85,19 +87,38 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
 
         Typeface mTextRobotoTf = ResourcesCompat.getFont(this, R.font.roboto_medium);
-        //Typeface mEmojiTypeFace = Typeface.createFromAsset(getAssets(), "emojione-android.ttf");
 
         mPhotoEditor = new PhotoEditor.Builder(this, mPhotoEditorView)
-                .setPinchTextScalable(true) // set flag to make text scalable when pinch
+                .setPinchTextScalable(true)
                 .setDefaultTextTypeface(mTextRobotoTf)
-                //.setDefaultEmojiTypeface(mEmojiTypeFace)
-                .build(); // build photo editor sdk
+                .build();
 
         mPhotoEditor.setOnPhotoEditorListener(this);
 
-        //Set Image Dynamically
-        mPhotoEditorView.getSource().setImageURI(Uri.parse(ImageActivity.currentImage.getDuongdan()));
-        //mPhotoEditorView.getSource().setImageResource(R.drawable.color_palette);
+        Uri imageUri = Uri.parse(ImageActivity.currentImage.getDuongdan());
+        int orientation = 0;
+        try {
+            ExifInterface exif = new ExifInterface(ImageActivity.currentImage.getDuongdan());
+            orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mPhotoEditorView.getSource().setImageURI(imageUri);
+
+        switch (orientation) {
+            case ORIENTATION_ROTATE_90:
+                mPhotoEditorView.setRotation(90);
+                break;
+
+            case ORIENTATION_ROTATE_180:
+                mPhotoEditorView.setRotation(180);
+                break;
+
+            case ORIENTATION_ROTATE_270:
+                mPhotoEditorView.setRotation(270);
+                break;
+        }
+
     }
 
     private void initViews() {
