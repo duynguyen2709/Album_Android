@@ -95,7 +95,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
 
         mPhotoEditor.setOnPhotoEditorListener(this);
 
-        Uri imageUri = Uri.parse(ImageActivity.currentImage.getDuongdan());
         int orientation = 0;
         try {
             ExifInterface exif = new ExifInterface(ImageActivity.currentImage.getDuongdan());
@@ -103,7 +102,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         } catch (IOException e) {
             e.printStackTrace();
         }
-        mPhotoEditorView.getSource().setImageURI(imageUri);
+        mPhotoEditorView.getSource().setImageURI( Uri.parse(ImageActivity.currentImage.getDuongdan()));
 
         switch (orientation) {
             case ORIENTATION_ROTATE_90:
@@ -120,6 +119,8 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         }
 
     }
+
+
 
     private void initViews() {
         ImageView imgUndo;

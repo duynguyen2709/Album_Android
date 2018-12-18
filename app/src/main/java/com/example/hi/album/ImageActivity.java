@@ -1,14 +1,17 @@
 package com.example.hi.album;
 
 import android.app.Dialog;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.media.ExifInterface;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -27,18 +30,33 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.hi.album.imageeditor.EditImageActivity;
 import com.theartofdev.edmodo.cropper.CropImage;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import id.zelory.compressor.Compressor;
 //Activity dùng đề show 1 ảnh được chọn
@@ -164,7 +182,7 @@ public class ImageActivity extends AppCompatActivity {
             }
         });
 
-        final Intent editIntent = new Intent(getApplicationContext(),EditImageActivity.class);
+        final Intent editIntent = new Intent(getApplicationContext(), EditImageActivity.class);
 
         btn_Edit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,8 +191,8 @@ public class ImageActivity extends AppCompatActivity {
                 startActivity(editIntent);
             }
         });
-
     }
+
 
     private void editBitmap(Bitmap bitmap, String filePath) {
         try {

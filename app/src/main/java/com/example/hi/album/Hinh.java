@@ -1,6 +1,9 @@
 package com.example.hi.album;
 
+import android.support.media.ExifInterface;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 // Class chứa thông tin một ảnh trong Project
@@ -10,12 +13,18 @@ public class Hinh {
     String tenhinh;
     Integer addDate;
     boolean check;
+    ExifInterface exif = null;
 
     public Hinh(String duongdan, String tenhinh, Integer adddDate) {
         this.duongdan = duongdan;
         this.tenhinh = tenhinh;
         this.addDate = adddDate;
         this.check = false;
+        try{
+            exif = new ExifInterface(duongdan);
+        } catch (IOException e) {
+            exif = null;
+        }
     }
 
     public String getDuongdan() {

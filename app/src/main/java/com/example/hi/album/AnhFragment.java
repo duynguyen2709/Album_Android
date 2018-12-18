@@ -43,7 +43,10 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
     Uri Image_URI = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
     static ArrayList<Hinh> mangHinh = new ArrayList<>();
 
-    static ArrayList<ArrayList<Hinh>> mangHinhDate;
+    static ArrayList<ArrayList<Hinh>> mangHinhDate = new ArrayList<>();
+
+    static Map<Integer, ArrayList<Hinh>> mapImage = new TreeMap<>(Collections.<Integer>reverseOrder());
+    boolean hasNewChanged = false;
 
     //listview chua nhieu recycleview
     ListView listView;
@@ -53,17 +56,17 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
 
     @Nullable
 
+
     @Override
     public void onResume() {
         long start = System.currentTimeMillis();
         super.onResume();
 
+        hasNewChanged = false;
         //***Khởi tạo các mảng***//
-
-        mangHinh = new ArrayList<Hinh>();
-        mangHinhDate = new ArrayList<ArrayList<Hinh>>();
-
-        Map<Integer, ArrayList<Hinh>> mapImage = new TreeMap<>(Collections.<Integer>reverseOrder());
+//
+//        mangHinh = new ArrayList<>();
+//        mangHinhDate = new ArrayList<>();
 
         ContentResolver contentResolver = getActivity().getContentResolver();
 
@@ -78,11 +81,16 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
             Integer dateText = Integer.valueOf(df2.format(lastModDate));
             if (TempFiles.exists()) {
                 Hinh currentImage = new Hinh(duongdanhinhanh, tenhinh, dateText);
-                mangHinh.add(currentImage);
-
+                    mangHinh.add(currentImage);
                 if (mapImage.containsKey(dateText)) {
-                    mapImage.get(dateText).add(currentImage);
+                    {
+                        if (!mapImage.get(dateText).contains(currentImage)) {
+                            mapImage.get(dateText).add(currentImage);
+                            hasNewChanged = true;
+                        }
+                    }
                 } else {
+                    hasNewChanged = true;
                     ArrayList<Hinh> temp = new ArrayList<>();
                     temp.add(currentImage);
                     mapImage.put(dateText, temp);
@@ -91,13 +99,16 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
             }
             cursor.moveToPrevious();
         }
-        mangHinhDate.clear();
-        mangHinhDate.addAll(mapImage.values());
+        if (hasNewChanged) {
+            mangHinhDate.clear();
+            mangHinhDate.addAll(mapImage.values());
+            customListviewImageAdapter = new CustomListviewImageAdapter(context, mangHinhDate, R.layout.custom_item_listview_img);
+            listView.setAdapter(customListviewImageAdapter);
+            listView.setDivider(null);
+            listView.setFastScrollEnabled(true);
 
-        customListviewImageAdapter = new CustomListviewImageAdapter(context, mangHinhDate, R.layout.custom_item_listview_img);
-        listView.setAdapter(customListviewImageAdapter);
-        listView.setDivider(null);
-        listView.setFastScrollEnabled(true);
+        }
+
 
         MainActivity.funcExecuteTime.put("onResume AnhFragment", System.currentTimeMillis() - start);
 
