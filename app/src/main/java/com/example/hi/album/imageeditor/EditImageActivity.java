@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
@@ -25,13 +26,18 @@ import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.hi.album.AnhFragment;
 import com.example.hi.album.ImageActivity;
 import com.example.hi.album.R;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.UUID;
 
 import ja.burhanrashid52.photoeditor.OnPhotoEditorListener;
+import ja.burhanrashid52.photoeditor.OnSaveBitmap;
 import ja.burhanrashid52.photoeditor.PhotoEditor;
 import ja.burhanrashid52.photoeditor.PhotoEditorView;
 import ja.burhanrashid52.photoeditor.PhotoFilter;
@@ -103,7 +109,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             e.printStackTrace();
         }
         mPhotoEditorView.getSource().setImageURI( Uri.parse(ImageActivity.currentImage.getDuongdan()));
-
         switch (orientation) {
             case ORIENTATION_ROTATE_90:
                 mPhotoEditorView.setRotation(90);
@@ -208,9 +213,14 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     private void saveImage() {
         if (requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             showLoading("Saving...");
-            File file = new File(Environment.getExternalStorageDirectory()
-                    + File.separator + ""
-                    + System.currentTimeMillis() + ".png");
+
+            final String currentFilePath = ImageActivity.currentImage.getDuongdan();
+            int index = currentFilePath.lastIndexOf('.');
+            final int slash = currentFilePath.lastIndexOf('/');
+            String newFilePath = currentFilePath.substring(0,index) + System.currentTimeMillis() + currentFilePath.substring(index);
+
+            File file = new File(newFilePath);
+
             try {
                 file.createNewFile();
 
@@ -219,21 +229,43 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
                         .setTransparencyEnabled(true)
                         .build();
 
-                mPhotoEditor.saveAsFile(file.getAbsolutePath(), saveSettings, new PhotoEditor.OnSaveListener() {
+                mPhotoEditor.saveAsBitmap(saveSettings, new OnSaveBitmap() {
                     @Override
-                    public void onSuccess(@NonNull String imagePath) {
+                    public void onBitmapReady(Bitmap saveBitmap) {
                         hideLoading();
                         showSnackbar("Image Saved Successfully");
-                        mPhotoEditorView.getSource().setImageURI(Uri.fromFile(new File(imagePath)));
+                        String path = MediaStore.Images.Media.insertImage(getContentResolver(),
+                                saveBitmap,UUID.randomUUID() + currentFilePath.substring(slash+1),
+                                "Edit");
+                        mPhotoEditorView.getSource().setImageBitmap(saveBitmap);
                     }
 
                     @Override
-                    public void onFailure(@NonNull Exception exception) {
+                    public void onFailure(Exception e) {
                         hideLoading();
                         showSnackbar("Failed to save Image");
                     }
                 });
-            } catch (IOException e) {
+//                mPhotoEditor.saveAsFile(file.getAbsolutePath(), saveSettings, new PhotoEditor.OnSaveListener() {
+//                    @Override
+//                    public void onSuccess(@NonNull String imagePath) {
+//                        hideLoading();
+//                        showSnackbar("Image Saved Successfully");
+//                        mPhotoEditorView.getSource().setImageURI(Uri.fromFile(new File(imagePath)));
+//
+//                    }
+//
+//                    @Override
+//                    public void onFailure(@NonNull Exception exception) {
+//                        hideLoading();
+//                        showSnackbar("Failed to save Image");
+//                    }
+//                });
+            }
+            catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            catch (IOException e) {
                 e.printStackTrace();
                 hideLoading();
                 showSnackbar(e.getMessage());
