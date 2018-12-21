@@ -434,10 +434,6 @@ public class ImageActivity extends AppCompatActivity {
                     FileOutputStream out = new FileOutputStream(f);
                     f.setReadable(true, false);
                     f.setWritable(true, false);
-                            /*Matrix matrix = new Matrix();
-
-                            matrix.postRotate(270);
-                            Bitmap rotatedBitmap = Bitmap.createBitmap(resBitmap, 0, 0, resBitmap.getWidth(), resBitmap.getHeight(), matrix, true);*/
                     resBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                     out.flush();
                     out.close();
@@ -472,7 +468,7 @@ public class ImageActivity extends AppCompatActivity {
     private void deleteImage() {
         // luu lai vi tri cua hinh
         int tmp = viewPager.getCurrentItem();
-        //Toast.makeText(ImageActivity.this, ""+viewPager.getCurrentItem(), //Toast.LENGTH_SHORT).show();
+
         if (loai == false) {
             //xử lý I
 
@@ -481,12 +477,9 @@ public class ImageActivity extends AppCompatActivity {
             MainActivity.collectedimgs.add(AnhFragment.mangHinh.get(tmp));
 
             // Tìm và xóa ảnh
-
-
             for (int j = 0; j < MainActivity.collectedimgs.size(); j++) {
                 File file = new File(MainActivity.collectedimgs.get(j).getDuongdan());
                 boolean flag = file.delete();
-                //Toast.makeText(ImageActivity.this,"Do dai cua mang"+MainActivity.collectedimgs.size(),//Toast.LENGTH_SHORT).show();
             }
 
             //***Cập nhập mảng chứa album***//

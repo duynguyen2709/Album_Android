@@ -3,6 +3,7 @@ package com.example.hi.album;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +31,6 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
     static ArrayList<Hinh> mangHinh = new ArrayList<>();
 
     static ArrayList<ArrayList<Hinh>> mangHinhDate = new ArrayList<>();
-
 
     //listview chua nhieu recycleview
     ListView listView;

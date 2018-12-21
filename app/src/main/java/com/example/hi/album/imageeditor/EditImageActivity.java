@@ -5,12 +5,12 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.media.ExifInterface;
@@ -26,13 +26,10 @@ import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.hi.album.AnhFragment;
 import com.example.hi.album.ImageActivity;
 import com.example.hi.album.R;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -102,13 +99,15 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         mPhotoEditor.setOnPhotoEditorListener(this);
 
         int orientation = 0;
+        ExifInterface exif = null;
         try {
-            ExifInterface exif = new ExifInterface(ImageActivity.currentImage.getDuongdan());
+            exif = new ExifInterface(ImageActivity.currentImage.getDuongdan());
             orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        mPhotoEditorView.getSource().setImageURI( Uri.parse(ImageActivity.currentImage.getDuongdan()));
+        mPhotoEditorView.getSource().setImageURI(Uri.parse(ImageActivity.currentImage.getDuongdan()));
+
         switch (orientation) {
             case ORIENTATION_ROTATE_90:
                 mPhotoEditorView.setRotation(90);
@@ -124,7 +123,6 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
         }
 
     }
-
 
 
     private void initViews() {
@@ -215,62 +213,74 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
             showLoading("Saving...");
 
             final String currentFilePath = ImageActivity.currentImage.getDuongdan();
-            int index = currentFilePath.lastIndexOf('.');
             final int slash = currentFilePath.lastIndexOf('/');
-            String newFilePath = currentFilePath.substring(0,index) + System.currentTimeMillis() + currentFilePath.substring(index);
+            // int index = currentFilePath.lastIndexOf('.');
+            // String newFilePath = currentFilePath.substring(0, index) + System.currentTimeMillis() + currentFilePath.substring(index);
 
-            File file = new File(newFilePath);
+            SaveSettings saveSettings = new SaveSettings.Builder()
+                    .setClearViewsEnabled(true)
+                    .setTransparencyEnabled(true)
+                    .build();
 
-            try {
-                file.createNewFile();
 
-                SaveSettings saveSettings = new SaveSettings.Builder()
-                        .setClearViewsEnabled(true)
-                        .setTransparencyEnabled(true)
-                        .build();
+            mPhotoEditor.saveAsBitmap(saveSettings, new OnSaveBitmap() {
+                @Override
+                public void onBitmapReady(Bitmap saveBitmap) {
+                    hideLoading();
+                    showSnackbar("Image Saved Successfully");
 
-                mPhotoEditor.saveAsBitmap(saveSettings, new OnSaveBitmap() {
-                    @Override
-                    public void onBitmapReady(Bitmap saveBitmap) {
-                        hideLoading();
-                        showSnackbar("Image Saved Successfully");
-                        String path = MediaStore.Images.Media.insertImage(getContentResolver(),
-                                saveBitmap,UUID.randomUUID() + currentFilePath.substring(slash+1),
-                                "Edit");
-                        mPhotoEditorView.getSource().setImageBitmap(saveBitmap);
+                    mPhotoEditorView.getSource().setImageBitmap(saveBitmap);
+
+                    int orientation = 0;
+                    ExifInterface exif = null;
+                    try {
+                        exif = new ExifInterface(ImageActivity.currentImage.getDuongdan());
+                        orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
 
-                    @Override
-                    public void onFailure(Exception e) {
-                        hideLoading();
-                        showSnackbar("Failed to save Image");
+                    switch (orientation) {
+
+                        case ExifInterface.ORIENTATION_ROTATE_90:
+                            saveBitmap = rotateImage(saveBitmap, 90);
+                            break;
+
+                        case ExifInterface.ORIENTATION_ROTATE_180:
+                            saveBitmap = rotateImage(saveBitmap, 180);
+                            break;
+
+                        case ExifInterface.ORIENTATION_ROTATE_270:
+                            saveBitmap = rotateImage(saveBitmap, 270);
+                            break;
+
+                        case ExifInterface.ORIENTATION_NORMAL:
+
+                        default:
+                            break;
                     }
-                });
-//                mPhotoEditor.saveAsFile(file.getAbsolutePath(), saveSettings, new PhotoEditor.OnSaveListener() {
-//                    @Override
-//                    public void onSuccess(@NonNull String imagePath) {
-//                        hideLoading();
-//                        showSnackbar("Image Saved Successfully");
-//                        mPhotoEditorView.getSource().setImageURI(Uri.fromFile(new File(imagePath)));
-//
-//                    }
-//
-//                    @Override
-//                    public void onFailure(@NonNull Exception exception) {
-//                        hideLoading();
-//                        showSnackbar("Failed to save Image");
-//                    }
-//                });
-            }
-            catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-                hideLoading();
-                showSnackbar(e.getMessage());
-            }
+
+                    String path = MediaStore.Images.Media.insertImage(getContentResolver(),
+                            saveBitmap, UUID.randomUUID() + currentFilePath.substring(slash + 1),
+                            "Edit");
+
+
+                }
+
+                @Override
+                public void onFailure(Exception e) {
+                    hideLoading();
+                    showSnackbar("Failed to save Image");
+                }
+            });
         }
+    }
+
+    public static Bitmap rotateImage(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
+                matrix, true);
     }
 
     @Override
