@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
@@ -29,8 +30,8 @@ import java.util.Collections;
 public class AlbumFragment extends android.support.v4.app.Fragment implements FragmentCallbacks{
 
 
-    ListView listView;
-    static public CustomListviewAdapter lvadapter;
+    GridView gridView;
+    static public CustomListviewAdapter gvadapter;
 
    //***Mang chứa class thông tin của album***//
     static public ArrayList<ThongtinAlbum> Mang;
@@ -65,11 +66,11 @@ public class AlbumFragment extends android.support.v4.app.Fragment implements Fr
         Collections.reverse(Mang);
 
         //***xuat listview album***//
-        lvadapter=new CustomListviewAdapter(getActivity(),Mang,R.layout.custom_item_listview_album);
-        listView.setAdapter(lvadapter);
+        gvadapter=new CustomListviewAdapter(getActivity(),Mang,R.layout.custom_item_listview_album);
+            gridView.setAdapter(gvadapter);
 
         //***Bắt sự kiện click item của list view để xuất Album đó trong AlbumActivity***//
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(MainActivity.SeleteAlbum==false) {
@@ -111,7 +112,7 @@ public class AlbumFragment extends android.support.v4.app.Fragment implements Fr
         });
 
         //***Đăng kí sử dụng ContextMenu cho đối tượng listview***//
-        registerForContextMenu(listView);
+        registerForContextMenu(gridView);
     }
 
     @Override
@@ -121,7 +122,7 @@ public class AlbumFragment extends android.support.v4.app.Fragment implements Fr
         View view=inflater.inflate(R.layout.album_layout,container,false);
 
         //***Ánh xạ***//
-        listView=(ListView) view.findViewById(R.id.lvalbum);
+        gridView=(GridView) view.findViewById(R.id.gvalbum);
         return view;
     }
 

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,16 +39,6 @@ public class CustomRecyclerviewAdapter extends RecyclerView.Adapter<CustomRecycl
     //***Layout muốn dán***//
     private LayoutInflater inflater;
     private int pos;
-
-
-    //    public CustomRecyclerviewAdapter(Context context, ArrayList<Hinh> data,boolean loai) {
-//
-//        this.context = context;
-//        this.data = data;
-//        inflater = LayoutInflater.from(context);
-//        this.loai=loai;
-//        this.pos=-1;
-//    }
     public CustomRecyclerviewAdapter(Context context, ArrayList<Hinh> data, boolean loai, int pos) {
 
         this.context = context;
@@ -81,7 +72,16 @@ public class CustomRecyclerviewAdapter extends RecyclerView.Adapter<CustomRecycl
         Glide.with(context).load(data.get(position).getDuongdan())
                 .apply(options).thumbnail(0.6f)
                 .into(myViewHolder.imageView);
-        myViewHolder.checkBox.setChecked(data.get(position).check);
+
+        //***lưu ý trang thái được click của các ảnh trong trường hợp chuyển qua imageactivity rồi quay lại***//
+        for(int i=0;i<MainActivity.collectedimgs.size();i++)
+        {
+            if(MainActivity.collectedimgs.get(i).duongdan.equals(data.get(position).duongdan))
+            {
+                myViewHolder.checkBox.setChecked(true);
+            }
+        }
+
 
         if (MainActivity.status) {
             myViewHolder.linearLayout.setVisibility(View.VISIBLE);
@@ -140,7 +140,7 @@ public class CustomRecyclerviewAdapter extends RecyclerView.Adapter<CustomRecycl
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
-        LinearLayout linearLayout;
+        ConstraintLayout linearLayout;
         CheckBox checkBox;
 
         public MyViewHolder(View itemView) {

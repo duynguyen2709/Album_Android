@@ -477,6 +477,8 @@ public class ImageActivity extends AppCompatActivity {
             MainActivity.collectedimgs.add(AnhFragment.mangHinh.get(tmp));
 
             // Tìm và xóa ảnh
+
+
             for (int j = 0; j < MainActivity.collectedimgs.size(); j++) {
                 File file = new File(MainActivity.collectedimgs.get(j).getDuongdan());
                 boolean flag = file.delete();

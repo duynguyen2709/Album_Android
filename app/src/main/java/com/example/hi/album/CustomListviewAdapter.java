@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
 import android.view.LayoutInflater;
@@ -50,7 +51,7 @@ public class CustomListviewAdapter extends ArrayAdapter<ThongtinAlbum> {
     {
         TextView ten,soluong;
         ImageView imageView;
-        LinearLayout linearLayout;
+        ConstraintLayout constraintLayout;
         CheckBox checkBox;
     }
 
@@ -68,7 +69,7 @@ public class CustomListviewAdapter extends ArrayAdapter<ThongtinAlbum> {
             viewHolder.ten = (TextView) convertView.findViewById(R.id.tenalbum);
             viewHolder.soluong = (TextView) convertView.findViewById(R.id.soluong);
             viewHolder.imageView = (ImageView) convertView.findViewById(R.id.imgalbum);
-            viewHolder.linearLayout=(LinearLayout)convertView.findViewById(R.id.LNofitemalbum);
+            viewHolder.constraintLayout=(ConstraintLayout) convertView.findViewById(R.id.LNofitemalbum);
             viewHolder.checkBox=(CheckBox)convertView.findViewById(R.id.Checkalbum);
             convertView.setTag(viewHolder);
         }
@@ -92,11 +93,11 @@ public class CustomListviewAdapter extends ArrayAdapter<ThongtinAlbum> {
 
         if(MainActivity.statusalbum==true)
         {
-            viewHolder.linearLayout.setVisibility(View.VISIBLE);
+            viewHolder.constraintLayout.setVisibility(View.VISIBLE);
         }
         else
         {
-            viewHolder.linearLayout.setVisibility(View.INVISIBLE);
+            viewHolder.constraintLayout.setVisibility(View.INVISIBLE);
         }
 
         viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {

@@ -1,7 +1,6 @@
 package com.example.hi.album;
 
 import android.support.media.ExifInterface;
-import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;

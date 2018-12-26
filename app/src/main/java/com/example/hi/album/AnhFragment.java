@@ -32,6 +32,7 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
 
     static ArrayList<ArrayList<Hinh>> mangHinhDate = new ArrayList<>();
 
+
     //listview chua nhieu recycleview
     ListView listView;
     CustomListviewImageAdapter customListviewImageAdapter;

@@ -125,6 +125,7 @@ public class EditImageActivity extends BaseActivity implements OnPhotoEditorList
     }
 
 
+
     private void initViews() {
         ImageView imgUndo;
         ImageView imgRedo;

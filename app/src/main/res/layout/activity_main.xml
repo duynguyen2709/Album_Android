@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:layout_height="match_parent"
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android" >
@@ -19,20 +20,23 @@
             >
 
         </android.support.v7.widget.Toolbar>
+
         <android.support.design.widget.TabLayout
+            android:id="@+id/tab"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#145ba3"
-            android:id="@+id/tab"
-            app:tabTextColor="#faf7f7"
-            app:tabIndicatorHeight="10dp"
-            app:tabIndicatorColor="#f5f7f9"
-            app:tabSelectedTextColor="#161616"
+            android:background="#f7f7f9"
+            app:tabIndicatorColor="#145ba3"
+            app:tabIndicatorHeight="3dp"
+            app:tabSelectedTextColor="#145ba3"
+
+            app:tabTextColor="#403d3d"
             >
 
         </android.support.design.widget.TabLayout>
     </LinearLayout>
     <android.support.v4.view.ViewPager
+        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/viewpager">
