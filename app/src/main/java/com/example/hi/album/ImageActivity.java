@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.media.ExifInterface;
 import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -24,8 +25,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -94,11 +99,10 @@ public class ImageActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 finish();
-
             }
         });
+
         viewPager.setCurrentItem(position);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -106,7 +110,10 @@ public class ImageActivity extends AppCompatActivity {
                 int i = item.getItemId();
                 if (i == R.id.compress) {
                     compressImage();
+                } else if (i == R.id.metadata) {
+                    showMetadata();
                 }
+
                 return false;
             }
         });
@@ -191,6 +198,33 @@ public class ImageActivity extends AppCompatActivity {
                 startActivity(editIntent);
             }
         });
+    }
+
+    private void showMetadata() {
+        try {
+            currentImage = AnhFragment.mangHinh.get(viewPager.getCurrentItem());
+
+            ListView listView = new ListView(this);
+
+            ExifUtility exif = new ExifUtility();
+            String[] items = exif.getExif(currentImage.exif).toArray(new String[0]);
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.listview_metadata, R.id.txtitem, items);
+            listView.setAdapter(adapter);
+
+            AlertDialog.Builder builder = new
+                    AlertDialog.Builder(ImageActivity.this);
+            builder.setCancelable(true);
+            builder.setPositiveButton("OK", null);
+            builder.setView(listView);
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+        catch (Exception e){
+
+        }
+
     }
 
 
@@ -468,8 +502,8 @@ public class ImageActivity extends AppCompatActivity {
     private void deleteImage() {
         // luu lai vi tri cua hinh
         int tmp = viewPager.getCurrentItem();
-       
-	 if (loai == false) {
+
+        if (loai == false) {
             //xử lý I
 
             //Xóa collectedimgs và add đối tượng cần xóa
@@ -482,7 +516,7 @@ public class ImageActivity extends AppCompatActivity {
             for (int j = 0; j < MainActivity.collectedimgs.size(); j++) {
                 File file = new File(MainActivity.collectedimgs.get(j).getDuongdan());
                 boolean flag = file.delete();
-                
+
             }
 
             //***Cập nhập mảng chứa album***//
