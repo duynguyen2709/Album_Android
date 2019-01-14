@@ -468,8 +468,8 @@ public class ImageActivity extends AppCompatActivity {
     private void deleteImage() {
         // luu lai vi tri cua hinh
         int tmp = viewPager.getCurrentItem();
-
-        if (loai == false) {
+       
+	 if (loai == false) {
             //xử lý I
 
             //Xóa collectedimgs và add đối tượng cần xóa
@@ -482,6 +482,7 @@ public class ImageActivity extends AppCompatActivity {
             for (int j = 0; j < MainActivity.collectedimgs.size(); j++) {
                 File file = new File(MainActivity.collectedimgs.get(j).getDuongdan());
                 boolean flag = file.delete();
+                
             }
 
             //***Cập nhập mảng chứa album***//

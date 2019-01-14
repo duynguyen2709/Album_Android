@@ -3,19 +3,17 @@ package com.example.hi.album;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,9 +30,7 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
 
     static ArrayList<ArrayList<Hinh>> mangHinhDate = new ArrayList<>();
 
-
-    //listview chua nhieu recycleview
-    ListView listView;
+    RecyclerView listView;
     CustomListviewImageAdapter customListviewImageAdapter;
 
     View view;
@@ -43,7 +39,6 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
 
     @Override
     public void onResume() {
-        long start = System.currentTimeMillis();
         super.onResume();
 
         //***Khởi tạo các mảng***//
@@ -78,25 +73,23 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
             cursor.moveToPrevious();
         }
 
+        cursor.close();
+
         mangHinhDate.clear();
         mangHinhDate.addAll(mapImage.values());
+
         customListviewImageAdapter = new CustomListviewImageAdapter(context, mangHinhDate, R.layout.custom_item_listview_img);
         listView.setAdapter(customListviewImageAdapter);
-        listView.setDivider(null);
-        listView.setFastScrollEnabled(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false);
+        listView.setLayoutManager(linearLayoutManager);
 
-
-        MainActivity.funcExecuteTime.put("onResume AnhFragment", System.currentTimeMillis() - start);
-
-        //
     }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         context = getActivity();
 
         view = inflater.inflate(R.layout.anh_layout, container, false);
-        listView = (ListView) view.findViewById(R.id.lvimg);
-
+        listView = (RecyclerView) view.findViewById(R.id.lvimg);
 
         return view;
     }
