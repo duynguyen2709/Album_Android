@@ -10,9 +10,9 @@ import java.util.Date;
 import java.util.List;
 import static com.example.hi.album.MainActivity.viewPager;
 
-public class ExifUtility {
+class ExifUtility {
 
-    public List<String> getExif(ExifInterface exif) {
+    List<String> getExif(ExifInterface exif) {
 
         List<String> exifList = new ArrayList<>();
 

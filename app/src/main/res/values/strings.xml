@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ALBUM</string>
+    <string name="app_name">Album</string>
     <string name="label_brush">Brush</string>
     <string name="label_emoji">Emoji</string>
     <string name="label_sticker">Sticker</string>
