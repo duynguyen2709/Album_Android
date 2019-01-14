@@ -59,9 +59,6 @@ public class CustomRecyclerviewAdapter extends RecyclerView.Adapter<CustomRecycl
 
     @Override
     public void onBindViewHolder(final MyViewHolder myViewHolder, final int position) {
-        long start = System.currentTimeMillis();
-       //File file = new File(data.get(position).getDuongdan());
-
         RequestOptions options = new RequestOptions()
                 .centerCrop()
                 .fitCenter()
@@ -107,9 +104,9 @@ public class CustomRecyclerviewAdapter extends RecyclerView.Adapter<CustomRecycl
                     MainActivity.collectedimgs.add(new Hinh(data.get(position).getDuongdan()
                             , data.get(position).getTenhinh()
                             , data.get(position).getAddDate()));
-                    if (loai == false)
+                    if (!loai)
                         AnhFragment.mangHinhDate.get(pos).get(position).setCheck(true);
-                    else if (loai == true) {
+                    else {
                         MainActivity.mang.get(pos).get(position).setCheck(true);
                     }
                 } else {
@@ -118,18 +115,15 @@ public class CustomRecyclerviewAdapter extends RecyclerView.Adapter<CustomRecycl
                             MainActivity.collectedimgs.remove(i);
                         }
                     }
-                    if (loai == false)
+                    if (!loai)
                         AnhFragment.mangHinhDate.get(pos).get(position).setCheck(false);
-                    else if (loai == true) {
+                    else {
                         MainActivity.mang.get(pos).get(position).setCheck(false);
                     }
                 }
             }
 
         });
-
-
-        MainActivity.funcExecuteTime.put("onBindViewHolder CustomRecyclerviewAdapter", System.currentTimeMillis() - start);
 
     }
 

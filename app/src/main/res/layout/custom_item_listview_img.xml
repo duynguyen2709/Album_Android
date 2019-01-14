@@ -15,8 +15,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/tvdate"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:text="2/3/1999"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:textStyle="bold"
                 />
         <android.support.v7.widget.RecyclerView
