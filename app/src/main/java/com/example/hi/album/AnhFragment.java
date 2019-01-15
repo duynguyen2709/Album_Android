@@ -30,7 +30,7 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
 
     static ArrayList<ArrayList<Hinh>> mangHinhDate = new ArrayList<>();
 
-    RecyclerView listView;
+    static public RecyclerView listView;
     CustomListviewImageAdapter customListviewImageAdapter;
 
     View view;
@@ -83,7 +83,7 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
         listView.setAdapter(customListviewImageAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false);
         listView.setLayoutManager(linearLayoutManager);
-
+        listView.scrollToPosition(ImageActivity.position);
     }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {

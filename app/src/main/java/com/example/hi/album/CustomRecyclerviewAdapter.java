@@ -1,3 +1,4 @@
+
 package com.example.hi.album;
 
 import android.app.Dialog;
@@ -7,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -124,6 +126,34 @@ public class CustomRecyclerviewAdapter extends RecyclerView.Adapter<CustomRecycl
             }
 
         });
+        myViewHolder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if(loai==false) {
+                    if (((MainActivity) context).status == false) {
+                        ((MainActivity) context).status = true;
+                        ImageActivity.position=pos;
+                        MainActivity.viewPager.setAdapter(MainActivity.pagerAdapter);
+
+
+
+                        //***Show những lựa chọn cần thiết sau khi Select***//
+                        ((MainActivity) context).toolbar.getMenu().getItem(0).setVisible(false);
+                        ((MainActivity) context).toolbar.getMenu().getItem(1).setVisible(true);
+                        ((MainActivity) context).toolbar.getMenu().getItem(2).setVisible(true);
+                        ((MainActivity) context).toolbar.getMenu().getItem(3).setVisible(true);
+                        ((MainActivity) context).toolbar.getMenu().getItem(4).setVisible(true);
+                        ((MainActivity) context).toolbar.getMenu().getItem(5).setVisible(true);
+                    }
+                }
+                else
+                {
+
+                }
+                return false;
+            }
+        });
+
 
     }
 
@@ -142,6 +172,7 @@ public class CustomRecyclerviewAdapter extends RecyclerView.Adapter<CustomRecycl
             imageView = (ImageView) itemView.findViewById(R.id.imgrv);
             linearLayout = itemView.findViewById(R.id.LNofcardview);
             checkBox = itemView.findViewById(R.id.Check);
+
 
         }
     }

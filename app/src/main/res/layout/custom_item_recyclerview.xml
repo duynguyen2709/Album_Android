@@ -26,18 +26,20 @@
             android:id="@+id/LNofcardview"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:background="#ddc49296"
+            android:background="#64b2ebf2"
+            android:layout_margin="5dp"
             android:visibility="invisible">
 
             <CheckBox
                 android:id="@+id/Check"
-                android:layout_width="69dp"
-                android:layout_height="69dp"
-                android:width="69dp"
-                android:height="69dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:width="70dp"
+                android:height="70dp"
                 android:checked="false"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
         </android.support.constraint.ConstraintLayout>
     </FrameLayout>
 

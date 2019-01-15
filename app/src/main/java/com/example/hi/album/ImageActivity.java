@@ -77,7 +77,7 @@ public class ImageActivity extends AppCompatActivity {
     Button btn_Edit;
 
 
-    int position = 9;
+    static public int position = 0;
     String diachi;
     boolean loai;
     static public boolean co = false;
@@ -286,6 +286,22 @@ public class ImageActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        for(int i=0;i<AnhFragment.mangHinhDate.size();i++)
+        {
+            for(int j=0;j<AnhFragment.mangHinhDate.get(i).size();j++)
+            {
+                if(AnhFragment.mangHinhDate.get(i).get(j).duongdan==AnhFragment.mangHinh.get(viewPager.getCurrentItem()).getDuongdan())
+                {
+                    position=i;
+                    break;
+                }
+            }
+        }
+        super.onBackPressed();
+    }
+
     private void Anhxa() {
 
         toolbar = findViewById(R.id.toolbarofimgactivity);
@@ -307,6 +323,7 @@ public class ImageActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
 
 
         viewPager = (ViewPagerFixer) findViewById(R.id.viewpagerofimgactivity);
