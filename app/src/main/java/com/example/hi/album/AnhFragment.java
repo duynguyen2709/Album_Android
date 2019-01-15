@@ -41,20 +41,6 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
     public void onResume() {
         super.onResume();
 
-    }
-
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        context = getActivity();
-
-        view = inflater.inflate(R.layout.anh_layout, container, false);
-        listView = (RecyclerView) view.findViewById(R.id.lvimg);
-
-        return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
 
         //***Khởi tạo các mảng***//
         Map<Integer, ArrayList<Hinh>> mapImage = new TreeMap<>(Collections.<Integer>reverseOrder());
@@ -97,6 +83,16 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
         listView.setAdapter(customListviewImageAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false);
         listView.setLayoutManager(linearLayoutManager);
+
+    }
+
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        context = getActivity();
+
+        view = inflater.inflate(R.layout.anh_layout, container, false);
+        listView = (RecyclerView) view.findViewById(R.id.lvimg);
+
+        return view;
     }
 
     @Override
