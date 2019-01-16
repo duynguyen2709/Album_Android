@@ -44,15 +44,16 @@
         <EditText
             android:id="@+id/editText_per"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="60dp"
             android:layout_weight="1"
             android:ems="10"
-            android:gravity="bottom"
+            android:layout_gravity="center_vertical"
             android:inputType="number" />
 
     </LinearLayout>
 
     <LinearLayout
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

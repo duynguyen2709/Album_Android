@@ -642,6 +642,10 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
     public void ghivaobonhotrongtenalbum() {
         File duongdan = getCacheDir();
         File file = new File(duongdan, "nameofalbum.txt");
+        if (file.exists())
+            file.delete();
+
+        file = new File(duongdan, "nameofalbum.txt");
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             String buffer = new String();
@@ -653,6 +657,7 @@ public class MainActivity extends AppCompatActivity implements MainCallbacks {
             }
 
 
+            Log.d("ALBUM","ALBUMNAME= MainActivity" + buffer);
             fileOutputStream.write(buffer.getBytes());
             fileOutputStream.close();
         } catch (Exception e) {

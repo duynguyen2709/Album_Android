@@ -436,6 +436,11 @@ public class ImageActivity extends AppCompatActivity {
     public void ghivaobonhotrongtenalbum() {
         File duongdan = getCacheDir();
         File file = new File(duongdan, "nameofalbum.txt");
+        if (file.exists())
+            file.delete();
+
+        file = new File(duongdan, "nameofalbum.txt");
+
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             String buffer = new String();
@@ -445,7 +450,7 @@ public class ImageActivity extends AppCompatActivity {
                 else
                     buffer += MainActivity.MangTen.get(MainActivity.MangTen.size() - 1);
             }
-
+            Log.d("ALBUM","ALBUMNAME= ImageActivity" + buffer);
             fileOutputStream.write(buffer.getBytes());
             fileOutputStream.close();
         } catch (Exception e) {

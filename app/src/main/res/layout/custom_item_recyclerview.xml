@@ -26,7 +26,7 @@
             android:id="@+id/LNofcardview"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:background="#64b2ebf2"
+            android:background="#64fd9d9b"
             android:layout_margin="5dp"
             android:visibility="invisible">
 

@@ -28,8 +28,10 @@
         <EditText
             android:id="@+id/editText_Width"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="50dp"
+            android:paddingLeft="5dp"
             android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             android:ems="10"
             android:inputType="textPersonName" />
 
@@ -59,8 +61,10 @@
         <EditText
             android:id="@+id/editText_Height"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="50dp"
             android:layout_weight="1"
+            android:paddingLeft="5dp"
+            android:layout_gravity="center_vertical"
             android:ems="10"
             android:inputType="textPersonName" />
     </LinearLayout>
