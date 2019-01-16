@@ -29,6 +29,7 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
     static ArrayList<Hinh> mangHinh = new ArrayList<>();
 
     static ArrayList<ArrayList<Hinh>> mangHinhDate = new ArrayList<>();
+    static LinearLayoutManager linearLayoutManager = null;
 
     static public RecyclerView listView;
     CustomListviewImageAdapter customListviewImageAdapter;
@@ -40,7 +41,6 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
     @Override
     public void onResume() {
         super.onResume();
-
 
         //***Khởi tạo các mảng***//
         Map<Integer, ArrayList<Hinh>> mapImage = new TreeMap<>(Collections.<Integer>reverseOrder());
@@ -81,14 +81,13 @@ public class AnhFragment extends android.support.v4.app.Fragment implements Frag
 
         customListviewImageAdapter = new CustomListviewImageAdapter(context, mangHinhDate, R.layout.custom_item_listview_img);
         listView.setAdapter(customListviewImageAdapter);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false);
         listView.setLayoutManager(linearLayoutManager);
-        listView.scrollToPosition(ImageActivity.position);
+        //listView.scrollToPosition(ImageActivity.position);
     }
 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         context = getActivity();
-
+        linearLayoutManager = new LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false);
         view = inflater.inflate(R.layout.anh_layout, container, false);
         listView = (RecyclerView) view.findViewById(R.id.lvimg);
 
